@@ -1,0 +1,27 @@
+<package>
+  <name>cl_yaml</name>
+  <version>0.2.0</version>
+  <description>
+    3rd party library: A common lisp wrapper around libyaml,
+    a C yaml parser/emitter for yaml 1.1.
+  </description>
+
+  <maintainer email="georg.bartels@cs.uni-bremen.de">Georg Bartels</maintainer>
+  <author email="eudoxiahp@gmail.com">Fernando Borretti</author>
+
+  <license>MIT</license>
+
+  <url type="repository">https://github.com/cram-code/cram_3rdparty</url>
+  <url type="repository">https://github.com/eudoxia0/cl-yaml</url>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>libyaml</build_depend>
+  <build_depend>cffi</build_depend>
+  <build_depend>split_sequence</build_depend>
+  <build_depend>sbcl</build_depend>
+  <run_depend>sbcl</run_depend>
+  <run_depend>split_sequence</run_depend>
+  <run_depend>cffi</run_depend>
+  <run_depend>libyaml</run_depend>
+</package>
