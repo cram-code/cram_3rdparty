@@ -1,19 +1,19 @@
 <package>
   <name>cffi_ros_utils</name>
-  <version>0.1.0</version>
+  <version>0.1.2</version>
   <description>
-    ROS related CFFI interface
+    ROS utility functions to use CFFI interface
   </description>
   
   <author email="moesenle@cs.tum.edu">Lorenz Moesenlechner</author>
-  
+
   <maintainer email="moesenle@cs.tum.edu">Lorenz Moesenlechner</maintainer>
-  
+  <maintainer email="georg.bartels@cs.uni-bremen.de">Georg Bartels</maintainer>
+ 
   <license>BSD</license>
   
-  <url type="website">http://ros.org/wiki/cffi_ros_utils</url>
-  <url type="bugtracker">https://github.com/cram-code/cram_highlevel/issues</url>
-  <url type="repository">https://github.com/cram-code/cram_highlevel</url>
+  <url type="bugtracker">https://github.com/cram-code/cram_3rdparty/issues</url>
+  <url type="repository">https://github.com/cram-code/cram_3rdparty</url>
   
   <buildtool_depend>catkin</buildtool_depend>
   
