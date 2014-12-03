@@ -21,6 +21,7 @@
   <run_depend>alexandria</run_depend>
   <run_depend>babel</run_depend>
   <run_depend>cffi</run_depend>
+  <run_depend>cffi_ros_utils</run_depend>
   <run_depend>cl_store</run_depend>
   <run_depend>cl_utilities</run_depend>
   <run_depend>fiveam</run_depend>
