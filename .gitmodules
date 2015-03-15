@@ -1,0 +1,42 @@
+[submodule "alexandria/src"]
+	path = alexandria/src
+	url = git://common-lisp.net/projects/alexandria/alexandria.git
+[submodule "babel/src"]
+	path = babel/src
+	url = https://github.com/cl-babel/babel.git
+[submodule "cffi/src"]
+	path = cffi/src
+	url = https://github.com/cffi/cffi.git
+[submodule "cl_store/src"]
+	path = cl_store/src
+	url = https://github.com/skypher/cl-store.git
+[submodule "cl_utilities/src"]
+	path = cl_utilities/src
+	url = https://github.com/Publitechs/cl-utilities.git
+[submodule "fiveam/src"]
+	path = fiveam/src
+	url = https://github.com/sionescu/fiveam.git
+[submodule "gsd/src"]
+	path = gsd/src
+	url = http://repo.or.cz/gsd.git
+[submodule "gsll/src"]
+	path = gsll/src
+	url = git://repo.or.cz/gsll.git
+[submodule "lisp_unit/src"]
+	path = lisp_unit/src
+	url = https://github.com/OdonataResearchLLC/lisp-unit.git
+[submodule "split_sequence/src"]
+	path = split_sequence/src
+	url = https://github.com/sharplispers/split-sequence.git
+[submodule "trivial_features/src"]
+	path = trivial_features/src
+	url = git://github.com/trivial-features/trivial-features
+[submodule "trivial_garbage/src"]
+	path = trivial_garbage/src
+	url = https://github.com/trivial-garbage/trivial-garbage.git
+[submodule "trivial_gray_streams/src"]
+	path = trivial_gray_streams/src
+	url = https://github.com/trivial-gray-streams/trivial-gray-streams.git
+[submodule "yason/src"]
+	path = yason/src
+	url = https://github.com/hanshuebner/yason.git
