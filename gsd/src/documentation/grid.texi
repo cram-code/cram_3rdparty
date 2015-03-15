@@ -5,7 +5,7 @@
 @c %**end of header
 
 @copying
-Copyright @copyright{} 2009, 2010 Liam Healy
+Copyright @copyright{} 2009, 2010 Liam M. Healy
 @end copying
 
 @titlepage
@@ -28,6 +28,7 @@ This is the manual for the grid structured data suite of Lisp systems.
 * Introduction::        Introduction
 * Creating a grid::       Creating a grid
 * Operations::    Operations on grids 
+* Efficiency::    Increasing speed of foreign arrays
 * Installation::  Obtaining and installing this software, copyright and license
 * Copying::       Copying
 * Index::            Complete index
@@ -422,6 +423,16 @@ A @dfn{slice} is a subgrid.
 #2A((10.0d0 11.0d0 12.0d0))
 @end example
 
+@subsection @code{subgrid}
+A @dfn{stride} is the grid resulting from selection of elements at
+regular intervals.
+@example
+(stride #(1 2 3 4 5 6 7 8) 3)
+#(1 4 7)
+@end example
+The resultant grid will have rank one (vector) regardless of the source
+rank. 
+
 @subsection Vector products
 @code{cross},
 @code{inner}, 
@@ -437,13 +448,80 @@ system which will automatically load if
 @url{http://common-lisp.net/project/iterate/,@command{iterate}}, and
 the @command{grid} system are loaded.
 
+@node Efficiency
+@chapter Efficiency
+
+@cindex efficiency
+Access to elements of foreign arrays, for getting or setting, can be
+very slow if they are not declared.  These declarations can take
+@url{http://www.lispworks.com/documentation/HyperSpec/Body/03_c.htm,
+several forms}: @command{declare}, @command{declaim},
+@command{proclaim}, or @command{the}.  With the exception of the
+@command{the} form, these declarations will only be effective in SBCL
+and CCL.  Users of other implementations that support the environment
+function
+@url{http://www.cs.cmu.edu/Groups/AI/html/cltl/clm/node102.html,@command{variable-information}}
+should contact the GSD maintainer to have support added.  If
+declarations are present and the compiler honors the compiler macros
+that foreign-array defines, the @command{gref} and related forms are
+macro-expanded directly into foreign array calls, considerably
+increasing the speed of execution.
+
+When using matrices, declarations with explicit dimensions are also
+helpful for speed, e.g.
+@example
+(declare (type (grid:matrix-double-float 100 100) my-matrix new-matrix))
+@end example
+
+For setting array elements, it is better to use the macro @command{grid:gsetf}
+than @command{setf} when declarations are present.  It is hoped that
+eventually this macro can be eliminated.
+
+For example, the declarations in the following function, and the use of
+@command{grid:gsetf} instead of @command{setf}, help decrease the
+execution time when running this function:
+@example
+(defun foreign-array-test (dim)
+  (let ((input (grid:make-foreign-array
+		'double-float
+		:dimensions dim
+		:initial-element 1.0d0))
+	(output (grid:make-foreign-array 'double-float :dimensions dim)))
+    (declare (type grid:vector-double-float input output))   ; declaration of foreign arrays
+    (let ((tv0 0.0d0) (tv1 0.0d0))
+      (declare (type double-float tv0 tv1))
+      (iter (for i from 0 below dim)
+	    (setf tv0 0.0d0)
+	    (iter (for m from 0 to i)
+		  (iter (for n from i below dim)
+			(setf tv1 0.0d0)
+			(iter (for k from m to n)
+			      (incf tv1 (grid:gref input k)))
+			(incf tv0 (expt tv1 -2))))
+	    (grid:gsetf (grid:gref* output i) (- (grid:gref input i) tv0))))))
+@end example
+
 @node Installation
 @chapter Download and installation
 
 @cindex installation
-The gitweb page is @url{http://repo.or.cz/w/gsd.git}.  To download,
+The recommended way to download and install this software is through
+@url{http://www.quicklisp.org/,quicklisp}.  Install quicklisp following
+the directions, then do one of:
 @example
-@code{git clone git://repo.or.cz/gsd.git}
+(ql:quickload "grid")
+(ql:quickload "foreign-array")
+@end example
+as desired, and these systems will be ready to use.  If you wish to run
+the regression (unit) tests, do @code{(ql:quickload "grid-tests")}
+or @code{(ql:quickload "foreign-array-tests")}.
+
+Users that need the very latest version will need to fetch the
+repository via git.  The @url{http://repo.or.cz/w/gsd.git,gitweb page}
+gives a view of the commit history and information on cloning.  To
+clone,
+@example
+git clone @url{git://repo.or.cz/gsd.git}
 @end example
 
 The @code{grid} system depends on 
@@ -460,7 +538,7 @@ foreign arrays a native Lisp view via the function @code{cl-array} for
 foreign arrays made in Lisp (not created in foreign code) for supported
 implementations (currently SBCL, CCL, ECL, LispWorks, and Allegro).
 
-Install 
+Note: FSBV is for the time being mandatory.  Only one file is needed, and no foreign libraries, but until it is split into two separate systems, the whole thing must be loaded.
 
 @node Copying
 @chapter Copying

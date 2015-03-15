@@ -1,6 +1,6 @@
 ;; Copy objects
 ;; Liam Healy 2009-12-21 10:16:04EST copy.lisp
-;; Time-stamp: <2010-07-22 10:28:35EDT copy.lisp>
+;; Time-stamp: <2010-08-19 15:37:52EDT copy.lisp>
 ;;
 ;; Copyright 2009, 2010 Liam M. Healy
 ;; Distributed under the terms of the GNU General Public License
@@ -65,7 +65,7 @@
     (apply 'copy-grid object args)))
 
 (defun copy-to (object &optional (type *default-grid-type*))
-  "Make a CL array from the object."
+  "Make a grid of the specified type from the object."
   (copy object :grid-type type))
 
 (define-condition array-mismatch (error)

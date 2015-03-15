@@ -1,8 +1,8 @@
 ;; Updating and accessing histogram elements.
 ;; Liam Healy, Mon Jan  1 2007 - 14:43
-;; Time-stamp: <2010-06-30 21:02:26EDT updating-accessing.lisp>
+;; Time-stamp: <2012-01-13 12:01:27EST updating-accessing.lisp>
 ;;
-;; Copyright 2007, 2008, 2009 Liam M. Healy
+;; Copyright 2007, 2008, 2009, 2011 Liam M. Healy
 ;; Distributed under the terms of the GNU General Public License
 ;;
 ;; This program is free software: you can redistribute it and/or modify
@@ -23,6 +23,9 @@
 ;;; /usr/include/gsl/gsl_histogram.h
 ;;; /usr/include/gsl/gsl_histogram2d.h
 
+;;; Missing: 2D functions/methods; the 1D functions will need to be made into methods if not already.
+;;; http://www.gnu.org/s/gsl/manual/html_node/Updating-and-accessing-2D-histogram-elements.html
+
 (defmfun increment (histogram value &optional weight)
   ("gsl_histogram_increment" "gsl_histogram_accumulate")
   ((((mpointer histogram) :pointer) (value :double))
@@ -42,19 +45,20 @@
    histograms for a small range of a larger dataset, ignoring the values
    outside the range of interest.")
 
-(defmfun grid:gref ((histogram histogram) &rest indices)
+(defmfun grid:aref ((histogram histogram) &rest indices)
   "gsl_histogram_get"
-  (((mpointer histogram) :pointer) ((first indices) sizet))
+  (((mpointer histogram) :pointer) ((first indices) :sizet))
   :definition :method 
   :c-return :double
+  :index grid:aref
   :documentation			; FDL
   "Return the contents of the i-th bin of the histogram.
-   If i lies outside the valid range of indices for the
+   If i lies outside the valid range of index for the
    histogram then an error (input-domain) is signalled.")
 
 (defmfun range (histogram i)
   "gsl_histogram_get_range"
-  (((mpointer histogram) :pointer) (i sizet)
+  (((mpointer histogram) :pointer) (i :sizet)
    (lower (:pointer :double)) (upper (:pointer :double)))
   :documentation			; FDL
   "Find the upper and lower range limits of the i-th
@@ -81,25 +85,28 @@
   :documentation			; FDL
   "The minimum lower range limit of the histogram.")
 
-(defmfun bins (histogram)
+(defmfun grid:dimensions ((histogram histogram))
   "gsl_histogram_bins"
   (((mpointer histogram) :pointer))
-  :c-return sizet
+  :definition :method
+  :c-return (dim :sizet)
+  :return ((list dim))
   :documentation			; FDL
   "The number of bins in the histogram.")
 
-(defmfun reset (histogram)
+(defmfun set-zero ((histogram histogram))
   "gsl_histogram_reset"
   (((mpointer histogram) :pointer))
+  :definition :method
   :c-return :void
   :documentation			; FDL
   "Reset all the bins in the histogram to zero.")
 
 (defmfun histogram-find (histogram x-value &optional y-value)
   ("gsl_histogram_find" "gsl_histogram2d_find")
-  ((((mpointer histogram) :pointer) (x-value :double) (bin (:pointer sizet)))
+  ((((mpointer histogram) :pointer) (x-value :double) (bin (:pointer :sizet)))
    (((mpointer histogram) :pointer) (x-value :double) (y-value :double)
-   (xbin (:pointer sizet)) (ybin (:pointer sizet))))
+   (xbin (:pointer :sizet)) (ybin (:pointer :sizet))))
   :documentation			; FDL
   "Finds the bin number which covers the coordinate value in
    the histogram.  The bin is located using a binary search. The
@@ -127,22 +134,22 @@
    (set-ranges-uniform histo 0.0d0 10.0d0)
    (increment histo 2.7d0)
    (increment histo 6.9d0 2.0d0)
-   (grid:gref histo 1))
+   (grid:aref histo 1))
  (let ((histo (make-histogram 10)))
    (set-ranges-uniform histo 0.0d0 10.0d0)
    (increment histo 2.7d0)
    (increment histo 6.9d0 2.0d0)
-   (grid:gref histo 2))
+   (grid:aref histo 2))
  (let ((histo (make-histogram 10)))
    (set-ranges-uniform histo 0.0d0 10.0d0)
    (increment histo 2.7d0)
    (increment histo 6.9d0 2.0d0)
-   (grid:gref histo 6))
+   (grid:aref histo 6))
  (let ((histo (make-histogram 10)))
    (set-ranges-uniform histo 0.0d0 10.0d0)
    (increment histo 2.7d0)
    (increment histo 6.9d0 2.0d0)
-   (grid:gref histo 16))
+   (grid:aref histo 16))
  (let ((histo (make-histogram 10)))
    (set-ranges-uniform histo 0.0d0 10.0d0)
    (increment histo 2.7d0)
@@ -152,7 +159,7 @@
    (set-ranges-uniform histo 0.0d0 10.0d0)
    (increment histo 2.7d0)
    (increment histo 6.9d0 2.0d0)
-   (bins histo))
+   (grid:dimensions histo))
  (let ((histo (make-histogram 10)))
    (set-ranges-uniform histo 0.0d0 10.0d0)
    (increment histo 2.7d0)
