@@ -1,0 +1,1 @@
+../src/trivial-garbage.asd

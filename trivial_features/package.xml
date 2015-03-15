@@ -1,7 +1,7 @@
 <package>
   <name>trivial_features</name>
-  <version>0.1.2</version>
-  <!-- external-version>0.6.0</external-version-->
+  <version>0.1.3</version>
+  <!-- external-version>0.8.0</external-version-->
   <description>
       3rd party library: trivial-features
   </description>
