@@ -1,7 +1,6 @@
 <package>
   <name>split_sequence</name>
   <version>0.1.3</version>
-  <!-- external-version>0.20011114.1</external-version-->
   <description>
     3rd party library: split-sequence
   </description>
@@ -16,6 +15,8 @@
   <url type="website">http://www.cliki.net/SPLIT-SEQUENCE</url>
   <url type="bugtracker">https://github.com/cram-code/cram_core/issues</url>
   <url type="repository">https://github.com/cram-code/cram_core</url>
+  <url type="repository">https://github.com/sharplispers/split-sequence.git</url>
+  <!--external-version>ccd34181d571c3d41f32855903f295f849209737</external-version-->
 
   <buildtool_depend>catkin</buildtool_depend>
 
