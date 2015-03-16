@@ -227,10 +227,10 @@ field-name"
 ;; TODO: figure out why the compiler macro is kicking in before
 ;; the setf expander.
 (defun %foreign-slot-value (obj type field)
-  (cffi:foreign-slot-value obj type field))
+  (cffi:foreign-slot-value obj `(:struct ,type) field))
 
 (defun (setf %foreign-slot-value) (value obj type field)
-  (setf (cffi:foreign-slot-value obj type field) value))
+  (setf (cffi:foreign-slot-value obj `(:struct ,type) field) value))
 
 (defmacro get-slot-value (obj type field)
   "Access a slot value from a structure."
@@ -650,9 +650,11 @@ output to *trace-output*.  Returns the shell's exit code."
         "")))
 
 (defmacro octets-to-string (octets &key encoding)
-  `(babel:octets-to-string
-    :encoding (or ,encoding cffi:*default-foreign-encoding*)))
+  `(babel:octets-to-string ,octets
+                           :encoding (or ,encoding
+                                         cffi:*default-foreign-encoding*)))
 
 (defun foreign-encoded-octet-count (str &key encoding)
-  `(babel:string-size-in-octets
-    ,str :encoding (or ,encoding cffi:*default-foreign-encoding*)))
+  (babel:string-size-in-octets str
+                               :encoding (or encoding
+                                             cffi:*default-foreign-encoding*)))

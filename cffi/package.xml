@@ -15,6 +15,8 @@
   <url type="website">http://common-lisp.net/project/cffi/</url>
   <url type="bugtracker">https://github.com/cram-code/cram_core/issues</url>
   <url type="repository">https://github.com/cram-code/cram_core</url>
+  <url type="repository">https://github.com/cffi/cffi.git</url>
+  <!--external-version>v0.14.0</external-version-->
 
   <buildtool_depend>catkin</buildtool_depend>
 
