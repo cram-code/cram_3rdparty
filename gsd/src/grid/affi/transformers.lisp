@@ -1,6 +1,6 @@
 ;; AFFI transformers
 ;; Tamas Papp and Liam Healy
-;; Time-stamp: <2010-01-20 14:45:19EST transformers.lisp>
+;; Time-stamp: <2010-08-26 23:20:54EDT transformers.lisp>
 ;;
 ;; Copyright 2008, 2009 Tamas Papp and Liam M. Healy
 ;; Distributed under the terms of the GNU General Public License
@@ -20,7 +20,7 @@
 
 (in-package :affi)
 
-(export '(permute transpose subrange drop diagonal extrude))
+(export '(permute transpose subrange drop diagonal extrude stride))
 
 ;;;;****************************************************************************
 ;;;; Application of transformers
@@ -186,3 +186,15 @@ index.  If `which' is nil, no dimension is dropped."
   (make-affi-int
    (insert-at new-dimension (coerce (get-domain affi) 'list) index)
    (insert-at 0 (coerce (get-coeff affi) 'list) index)))
+
+(defun stride (affi stride)
+  "Create a new AFFI that makes the grid look as if is
+   been reduced by taking only every stride-th element."
+  (make-affi-int
+   (copy-into-fixnum-vector
+    (list
+     (ceiling
+      (grid::total-size-from-dimension (get-domain affi))
+      stride)))
+   (list stride)
+   (get-const affi)))

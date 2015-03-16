@@ -1,6 +1,6 @@
 ;; Generalized array
 ;; Liam Healy 2009-10-25 22:32:01EDT generalized-array.lisp
-;; Time-stamp: <2010-06-19 22:40:21EDT array.lisp>
+;; Time-stamp: <2010-11-15 10:24:20EST array.lisp>
 ;;
 ;; Copyright 2009, 2010 Liam M. Healy
 ;; Distributed under the terms of the GNU General Public License
@@ -45,7 +45,7 @@
 
 (defmethod make-grid-data
     ((type (eql 'array)) dimensions rest-spec
-     &rest keys &key (initial-element nil initial-element-p)
+     &key (initial-element nil initial-element-p)
      (initial-contents nil initial-contents-p))
   (let* ((element-type (top-spec-type rest-spec))
 	 (array

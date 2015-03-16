@@ -1,6 +1,6 @@
 ;; Make arrays from other arrays
 ;; Liam Healy 2009-11-11 11:33:22EST compose-array.lisp
-;; Time-stamp: <2010-07-22 10:40:15EDT compose.lisp>
+;; Time-stamp: <2010-08-26 23:23:54EDT compose.lisp>
 ;;
 ;; Copyright 2009 Liam M. Healy
 ;; Distributed under the terms of the GNU General Public License
@@ -22,7 +22,7 @@
 
 (export '(subgrid codimension-one-subspace row column
 	  transpose diagonal identity-matrix set-diagonal
-	  concatenate-grids))
+	  concatenate-grids stride))
 
 ;;;;****************************************************************************
 ;;;; Drop
@@ -233,3 +233,15 @@
 		     (setf (nth axis start) (elt dim0 axis))
 		     start)))
 	answer))))
+
+;;;;****************************************************************************
+;;;; Stride
+;;;;****************************************************************************
+
+(defun stride (grid stride &key destination)
+  "Create a new grid with every stride-th element."
+  (map-grid :source grid
+	    :source-affi (affi:stride (affi grid) stride)
+	    :destination destination
+	    :destination-affi
+	    (affi:make-affi (list (ceiling (total-size grid) stride)))))

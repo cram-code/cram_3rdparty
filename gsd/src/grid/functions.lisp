@@ -1,6 +1,6 @@
 ;; Functions on grids
 ;; Liam Healy 2010-06-19 22:25:17EDT functions.lisp
-;; Time-stamp: <2010-07-03 23:31:02EDT functions.lisp>
+;; Time-stamp: <2010-11-14 17:35:01EST functions.lisp>
 
 (in-package :grid)
 
@@ -21,6 +21,10 @@
 	      (when (listp (first object))
 		(dimensions (first object))))
 	(list 0))))
+
+(defgeneric total-size (grid)
+  (:method ((grid t))
+    (total-size-from-dimension (dimensions grid))))
 
 (defgeneric specification (grid)
   (:documentation "The grid specification.")
