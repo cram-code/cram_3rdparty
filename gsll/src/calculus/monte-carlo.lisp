@@ -1,8 +1,8 @@
 ;; Monte Carlo Integration
 ;; Liam Healy Sat Feb  3 2007 - 17:42
-;; Time-stamp: <2010-06-29 22:15:24EDT monte-carlo.lisp>
+;; Time-stamp: <2012-01-13 12:01:39EST monte-carlo.lisp>
 ;;
-;; Copyright 2007, 2008, 2009 Liam M. Healy
+;; Copyright 2007, 2008, 2009, 2011 Liam M. Healy
 ;; Distributed under the terms of the GNU General Public License
 ;;
 ;; This program is free software: you can redistribute it and/or modify
@@ -31,7 +31,7 @@
 
 (defmobject monte-carlo-plain
     "gsl_monte_plain"
-  ((dim sizet))
+  ((dim :sizet))
   "plain Monte Carlo integration"
   :documentation			; FDL
   "Make and initialize a workspace for Monte Carlo integration in dimension dim."
@@ -51,14 +51,14 @@
 	      (scalars t))
   "gsl_monte_plain_integrate"
   ((callback :pointer)
-   ((foreign-pointer lower-limits) :pointer) ((foreign-pointer upper-limits) :pointer)
-   ((dim0 lower-limits) sizet) (number-of-samples sizet)
+   ((grid:foreign-pointer lower-limits) :pointer) ((grid:foreign-pointer upper-limits) :pointer)
+   ((dim0 lower-limits) :sizet) (number-of-samples :sizet)
    ((mpointer generator) :pointer)
    ((mpointer state) :pointer)
    (result (:pointer :double)) (abserr (:pointer :double)))
   :inputs (lower-limits upper-limits)
   :callbacks
-  (callback fnstruct-dimension (dimension)
+  (callback (:struct fnstruct-dimension) (dimension)
 	    (function :double (:input :double :cvector dim0) :slug))
   :callback-dynamic (((dim0 lower-limits)) (function scalars))
   :documentation			; FDL
@@ -83,7 +83,7 @@
 
 (defmobject monte-carlo-miser
     "gsl_monte_miser"
-  ((dim sizet))
+  ((dim :sizet))
   "miser Monte Carlo integration"
   :documentation			; FDL
   "Make and initialize a workspace for Monte Carlo integration in
@@ -112,14 +112,14 @@
 	      (scalars t))
   "gsl_monte_miser_integrate"
   ((callback :pointer)
-   ((foreign-pointer lower-limits) :pointer) ((foreign-pointer upper-limits) :pointer)
-   ((dim0 lower-limits) sizet) (number-of-samples sizet)
+   ((grid:foreign-pointer lower-limits) :pointer) ((grid:foreign-pointer upper-limits) :pointer)
+   ((dim0 lower-limits) :sizet) (number-of-samples :sizet)
    ((mpointer generator) :pointer)
    ((mpointer state) :pointer)
    (result (:pointer :double)) (abserr (:pointer :double)))
   :inputs (lower-limits upper-limits)
   :callbacks
-  (callback fnstruct-dimension (dimension)
+  (callback (:struct fnstruct-dimension) (dimension)
 	    (function :double (:input :double :cvector dim0) :slug))
   :callback-dynamic (((dim0 lower-limits)) (function scalars))
   :documentation			; FDL
@@ -144,7 +144,7 @@
 
 (defmobject monte-carlo-vegas
     "gsl_monte_vegas"
-  ((dim sizet))
+  ((dim :sizet))
   "vegas Monte Carlo integration"
   :documentation			; FDL
   "Make and initialize a workspace for Monte Carlo integration in
@@ -173,14 +173,14 @@
 	      (scalars t))
   "gsl_monte_vegas_integrate"
   ((callback :pointer)
-   ((foreign-pointer lower-limits) :pointer) ((foreign-pointer upper-limits) :pointer)
-   ((dim0 lower-limits) sizet) (number-of-samples sizet)
+   ((grid:foreign-pointer lower-limits) :pointer) ((grid:foreign-pointer upper-limits) :pointer)
+   ((dim0 lower-limits) :sizet) (number-of-samples :sizet)
    ((mpointer generator) :pointer)
    ((mpointer state) :pointer)
    (result (:pointer :double)) (abserr (:pointer :double)))
   :inputs (lower-limits upper-limits)
   :callbacks
-  (callback fnstruct-dimension (dimension)
+  (callback (:struct fnstruct-dimension) (dimension)
 	    (function :double (:input :double :cvector dim0) :slug))
   :callback-dynamic (((dim0 lower-limits)) (function scalars))
   :documentation			; FDL
@@ -205,13 +205,16 @@
 
 (defun mcrw (x y z)
   "Example function for Monte Carlo used in random walk studies."
-  (* (/ (expt pi 3))
+  (* (/ (expt dpi 3))
      (/ (- 1 (* (cos x) (cos y) (cos z))))))
 
-(defparameter *mc-lower* #m(0.0d0 0.0d0 0.0d0))
+(defparameter *mc-lower*
+  (grid:make-foreign-array
+   'double-float :initial-contents '(0.0d0 0.0d0 0.0d0)))
 
 (defparameter *mc-upper*
-  (grid:make-foreign-array 'double-float :initial-contents (list pi pi pi)))
+  (grid:make-foreign-array
+   'double-float :initial-contents (make-list 3 :initial-element dpi)))
 
 (defun random-walk-plain-example (&optional (nsamples 500000))
   (monte-carlo-integrate-plain 'mcrw *mc-lower* *mc-upper* nsamples))

@@ -1,8 +1,8 @@
 ;; Permutations
 ;; Liam Healy, Sun Mar 26 2006 - 11:51
-;; Time-stamp: <2010-07-16 17:14:45EDT permutation.lisp>
+;; Time-stamp: <2012-01-13 12:01:35EST permutation.lisp>
 ;;
-;; Copyright 2006, 2007, 2008, 2009, 2010 Liam M. Healy
+;; Copyright 2006, 2007, 2008, 2009, 2010, 2011 Liam M. Healy
 ;; Distributed under the terms of the GNU General Public License
 ;;
 ;; This program is free software: you can redistribute it and/or modify
@@ -38,7 +38,7 @@
     (setf (grid:metadata-slot object 'mpointer)
 	  mptr
 	  (cffi:foreign-slot-value mptr 'gsl-permutation-c 'data)
-	  (foreign-pointer object)
+	  (grid:foreign-pointer object)
 	  (cffi:foreign-slot-value mptr 'gsl-permutation-c 'size)
 	  (first dimensions))
     (tg:finalize object (lambda () (cffi:foreign-free mptr)))))
@@ -53,7 +53,7 @@
 	 (make-instance
 	  'permutation
 	  :element-type '(unsigned-byte #+int64 64 #+int32 32)
-	  :dimensions (if (typep n 'permutation) (dimensions n) (list n)))))
+	  :dimensions (if (typep n 'permutation) (grid:dimensions n) (list n)))))
     (when initialize
       (if (typep n 'permutation)
 	  (error "not available yet")	; (copy perm n)
@@ -101,7 +101,7 @@
 
 (defmfun swap-elements ((p permutation) i j)
   "gsl_permutation_swap"
-  (((mpointer p) :pointer) (i sizet) (j sizet))
+  (((mpointer p) :pointer) (i :sizet) (j :sizet))
   :definition :method
   :inputs (p)
   :outputs (p)
@@ -117,7 +117,7 @@
   "gsl_permutation_size"
   (((mpointer p) :pointer))
   :definition :method
-  :c-return sizet
+  :c-return :sizet
   :inputs (p)
   :documentation			; FDL
   "The size of the permutation p.")
@@ -218,9 +218,9 @@
    have the same length.")
 
 (defmfun permute
-    (p (data #.+foreign-pointer-class+) &optional (size 1) (stride 1))
+    (p (data #.grid:+foreign-pointer-class+) &optional (size 1) (stride 1))
   "gsl_permute"
-  (((mpointer p) :pointer) (data :pointer) (stride sizet) (size sizet))
+  (((mpointer p) :pointer) (data :pointer) (stride :sizet) (size :sizet))
   :definition :method
   :inputs (p data)
   :outputs (data)
@@ -246,9 +246,9 @@
    have the same length.")
 
 (defmfun permute-inverse
-    (p (data #.+foreign-pointer-class+) &optional (size 1) (stride 1))
+    (p (data #.grid:+foreign-pointer-class+) &optional (size 1) (stride 1))
   "gsl_permute_inverse"
-  (((mpointer p) :pointer) (data :pointer) (stride sizet) (stride sizet))
+  (((mpointer p) :pointer) (data :pointer) (stride :sizet) (stride :sizet))
   :definition :method
   :inputs (p data)
   :outputs (data)
@@ -294,7 +294,7 @@
 
 (defmfun inversions (p)
   "gsl_permutation_inversions" (((mpointer p) :pointer))
-  :c-return sizet
+  :c-return :sizet
   :inputs (p)
   :documentation			; FDL
   "Count the number of inversions in the permutation
@@ -305,7 +305,7 @@
 
 (defmfun linear-cycles (p)
   "gsl_permutation_linear_cycles" (((mpointer p) :pointer))
-  :c-return sizet
+  :c-return :sizet
   :inputs (p)
   :documentation			; FDL
   "Count the number of cycles in the permutation p, given in linear form.")
@@ -313,7 +313,7 @@
 (defmfun canonical-cycles (p)
   "gsl_permutation_canonical_cycles"
   (((mpointer p) :pointer))
-  :c-return sizet
+  :c-return :sizet
   :inputs (p)
   :documentation			; FDL
   "Count the number of cycles in the permutation q, given in canonical form.")
@@ -339,7 +339,7 @@
 
 (save-test permutation
  (let ((perm-1 (make-permutation 4 t)))
-   (grid:gref perm-1 2))
+   (grid:aref perm-1 2))
  (let ((perm-1 (make-permutation 4 t)))	;grid:contents
    (grid:contents perm-1))
  (let ((perm-1 (make-permutation 4 t)))	;permutation-reverse
