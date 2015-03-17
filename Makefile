@@ -10,22 +10,31 @@ lisp_unit = https://github.com/OdonataResearchLLC/lisp-unit.git
 split_sequence = https://github.com/sharplispers/split-sequence.git
 trivial_features = https://github.com/trivial-features/trivial-features.git
 trivial_garbage = https://github.com/trivial-garbage/trivial-garbage.git
-trivial_gray_stream = https://github.com/trivial-gray-streams/trivial-gray-streams.git
+trivial_gray_streams = https://github.com/trivial-gray-streams/trivial-gray-streams.git
 yason = https://github.com/hanshuebner/yason.git
 
 usage:
-		@echo "Usage: make update PKG=<pkgname>"
+		@echo "Usage: make update PKG=<pkgname> [VERSION=<version>]"
 		@echo "================================"
 		@echo "<pkgname> may be one of: alexandria babel cffi cl_store cl_utilities fiveam gsd"
 		@echo "                         gsll lisp_unit split_sequence trivial_features"
 		@echo "                         trivial_garbage trivial_gray_stream yason"
+		@echo "<version> may be a commit hash, a tag or a branch name"
 
-update:
+clone_repo:
 		@rm -r ./$(PKG)/src
 		@echo "Cloning repository $($(PKG))..."
 		@git clone $($(PKG)) ./$(PKG)/src
-		$(eval GIT_VERSION := $(shell cd ./$(PKG)/src; git rev-parse HEAD))
-		@echo "Updating version hash..."
-		@sed -i '/<!--external-version>.*<\/external-version-->/ s/>.*</>$(GIT_VERSION)</g' ./$(PKG)/package.xml
+
+set_version: clone_repo
+ifneq ($(VERSION),)
+		$(shell cd ./$(PKG)/src; git checkout $(VERSION) --)
+else
+		$(eval VERSION := $(shell cd ./$(PKG)/src; git rev-parse HEAD))
+endif
+		@echo "Updating version..."
+		@sed -i '/<!--external-version>.*<\/external-version-->/ s/>.*</>$(VERSION)</g' ./$(PKG)/package.xml
+
+update: set_version
 		@rm -rf ./$(PKG)/src/.{git,gitignore}
 		@echo "Done."
