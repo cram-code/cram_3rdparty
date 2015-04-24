@@ -23,6 +23,7 @@
   <run_depend>cffi</run_depend>
   <run_depend>cl_store</run_depend>
   <run_depend>cl_utilities</run_depend>
+  <run_depend>cl_yaml</run_depend>
   <run_depend>fiveam</run_depend>
   <run_depend>gsd</run_depend>
   <run_depend>gsll</run_depend>
