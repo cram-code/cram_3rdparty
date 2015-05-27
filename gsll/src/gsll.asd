@@ -1,8 +1,8 @@
 ;; Definition of GSLL system 
 ;; Liam Healy
-;; Time-stamp: <2010-07-13 21:07:57EDT gsll.asd>
+;; Time-stamp: <2012-02-05 16:50:51EST gsll.asd>
 ;;
-;; Copyright 2006, 2007, 2008, 2009 Liam M. Healy
+;; Copyright 2006, 2007, 2008, 2009, 2010, 2011 Liam M. Healy
 ;; Distributed under the terms of the GNU General Public License
 ;;
 ;; This program is free software: you can redistribute it and/or modify
@@ -18,24 +18,29 @@
 ;; You should have received a copy of the GNU General Public License
 ;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-(when (asdf:find-system :fsbv nil)
-  (pushnew :fsbv *features*))
-
 (eval-when (:compile-toplevel :load-toplevel :execute)
-  (asdf:oos 'asdf:load-op :cffi-grovel))
+  (asdf:oos 'asdf:load-op :cffi-libffi)) ; loads cff-grovel too, needed here
 
-(asdf:defsystem GSLL
+(asdf:defsystem #:gsll
   :name "GSLL"
   :description "GNU Scientific Library for Lisp."
   :version "0"
   :author "Liam M. Healy"
   :licence "GPL v3"
-  :depends-on (foreign-array grid cffi cffi-grovel trivial-garbage #+fsbv fsbv)
+  :defsystem-depends-on (#:cffi-grovel #:asdf-system-connections)
+  :depends-on (#:antik
+	       #:cffi-grovel
+	       #:trivial-garbage
+	       #:alexandria
+	       #:metabang-bind
+	       #:osicat)
   :components
   ((:module init
 	    :components
 	    ((:file "init")
-	     (cffi-grovel:grovel-file "libgsl" :pathname #+unix "libgsl-unix")
+	     (cffi-grovel:grovel-file
+	      "libgsl" :pathname #+unix "libgsl-unix" #-unix "nothing-here"
+	      :depends-on ("init"))
 	     (:file "utility" :depends-on ("init"))
 	     (:file "forms" :depends-on ("init"))
 	     (:file "conditions" :depends-on ("init" "libgsl"))
@@ -83,7 +88,7 @@
 	     (:file "combination" :depends-on ("foreign-array" "array-structs"))))
    (:file "polynomial" :depends-on (init data))
    (:module special-functions
-	    :depends-on (init)
+	    :depends-on (init mathematical)
 	    :components
 	    ((cffi-grovel:grovel-file "sf-result")
 	     (:file "return-structures" :depends-on ("sf-result"))
@@ -214,7 +219,7 @@
 	     (:file "probability-distribution" :depends-on ("histogram"))
 	     (:file "ntuple")))
    (:module calculus
-	    :depends-on (init data random)
+	    :depends-on (init mathematical data random)
 	    :components
 	    ((:file "numerical-integration")
 	     (:file "numerical-integration-with-tables"
@@ -232,7 +237,7 @@
 	     (:file "evolution")
 	     (:file "ode-example" :depends-on ("ode-system" "stepping"))))
    (:module interpolation
-	    :depends-on (init)
+	    :depends-on (init mathematical)
 	    :components
 	    ((:file "interpolation")
 	     (:file "types" :depends-on ("interpolation"))
@@ -241,11 +246,11 @@
 	     (:file "spline-example" :depends-on ("types"))))
    (:file "chebyshev" :depends-on (init))
    (cffi-grovel:grovel-file "series-struct")
-   (:file "series-acceleration" :depends-on (init "series-struct"))
+   (:file "series-acceleration" :depends-on (init mathematical "series-struct"))
    (:file "wavelet" :depends-on (init data))
    (:file "hankel" :depends-on (init data))
    (:module solve-minimize-fit
-	    :depends-on (init data random)
+	    :depends-on (init mathematical data random)
 	    :components
 	    ((:file "generic")
 	     (cffi-grovel:grovel-file "solver-struct")
@@ -264,4 +269,201 @@
 	    :components
 	    ((cffi-grovel:grovel-file "mksa")
 	     (cffi-grovel:grovel-file "cgsm")
+	     (cffi-grovel:grovel-file "num")
 	     (:file export)))))
+
+(asdf:defsystem-connection GSLL-tests
+  :name "GSLL-tests"
+  :description "Regression (unit) tests for GNU Scientific Library for Lisp."
+  :version "0"
+  :author "Liam M. Healy"
+  :licence "GPL v3"
+  :requires (gsll lisp-unit)
+  :components
+  ((:module test-unit
+	    :components
+	    ((cffi-grovel:grovel-file "machine")
+	     (:file "augment" :depends-on ("machine"))))
+   (:module tests
+	    :depends-on (test-unit)
+	    :components
+	    ((:file "absolute-deviation")
+	     (:file "absolute-sum")
+	     (:file "airy")
+	     (:file "autocorrelation")
+	     (:file "axpy")
+	     (:file "basis-spline")
+	     (:file "bernoulli")
+	     (:file "bessel")
+	     (:file "beta")
+	     (:file "binomial")
+	     (:file "blas-copy")
+	     (:file "blas-swap")
+	     (:file "cauchy")
+	     (:file "cdot")
+	     (:file "chebyshev")
+	     (:file "chi-squared")
+	     (:file "cholesky")
+	     (:file "clausen")
+	     (:file "column")
+	     (:file "combination")
+	     (:file "coulomb")
+	     (:file "coupling")
+	     (:file "correlation")
+	     (:file "covariance")
+	     (:file "dawson")
+	     (:file "debye")
+	     (:file "dilogarithm")
+	     (:file "dirichlet")
+	     (:file "discrete")
+	     (:file "dot")
+	     (:file "eigensystems")
+	     (:file "elementary")
+	     (:file "elliptic-functions")
+	     (:file "elliptic-integrals")
+	     (:file "error-functions")
+	     (:file "euclidean-norm")
+	     (:file "exponential-functions")
+	     (:file "exponential-integrals")
+	     (:file "exponential")
+	     (:file "exponential-power")
+	     (:file "fast-fourier-transform")
+	     (:file "fdist")
+	     (:file "fermi-dirac")
+	     (:file "flat")
+	     (:file "gamma")
+	     (:file "gamma-randist")
+	     (:file "gaussian-bivariate")
+	     (:file "gaussian")
+	     (:file "gaussian-tail")
+	     (:file "gegenbauer")
+	     (:file "geometric")
+	     (:file "givens")
+	     (:file "gumbel1")
+	     (:file "gumbel2")
+	     (:file "hankel")
+	     (:file "higher-moments")
+	     (:file "histogram")
+	     (:file "householder")
+	     (:file "hypergeometric")
+	     (:file "hypergeometric-randist")
+	     (:file "index-max")
+	     (:file "interpolation")
+	     (:file "inverse-matrix-product")
+	     (:file "laguerre")
+	     (:file "lambert")
+	     (:file "landau")
+	     (:file "laplace")
+	     (:file "legendre")
+	     (:file "levy")
+	     (:file "linear-least-squares")
+	     (:file "logarithmic")
+	     (:file "logarithm")
+	     (:file "logistic")
+	     (:file "lognormal")
+	     (:file "lu")
+	     (:file "mathematical")
+	     (:file "mathieu")
+	     (:file "matrix-div")
+	     (:file "matrix-max-index")
+	     (:file "matrix-max")
+	     (:file "matrix-mean")
+	     (:file "matrix-min")
+	     (:file "matrix-min-index")
+	     (:file "matrix-minmax-index")
+	     (:file "matrix-minmax")
+	     (:file "matrix-sub")
+	     (:file "matrix-add")
+	     (:file "matrix-mult")
+	     #+fsbv (:file "matrix-product-hermitian")
+	     (:file "matrix-product")
+	     (:file "matrix-product-nonsquare")
+	     (:file "matrix-product-symmetric")
+	     (:file "matrix-product-triangular")
+	     (:file "matrix-set-all")
+	     (:file "matrix-set-zero")
+	     (:file "matrix-standard-deviation")
+	     (:file "matrix-standard-deviation-with-fixed-mean")
+	     (:file "matrix-standard-deviation-with-mean")
+	     (:file "matrix-swap")
+	     (:file "matrix-transpose-copy")
+	     (:file "matrix-transpose")
+	     (:file "matrix-variance")
+	     (:file "matrix-variance-with-fixed-mean")
+	     (:file "matrix-variance-with-mean")
+	     (:file "median-percentile")
+	     (:file "minimization-one")
+	     (:file "minimization-multi")
+	     (:file "monte-carlo")
+	     (:file "multinomial")
+	     (:file "negative-binomial")
+	     (:file "nonlinear-least-squares")
+	     (:file "ntuple")
+	     (:file "numerical-differentiation")
+	     (:file "numerical-integration")
+	     (:file "ode")
+	     (:file "pareto")
+	     (:file "permutation")
+	     (:file "poisson")
+	     (:file "polynomial")
+	     (:file "power")
+	     (:file "psi")
+	     (:file "qr")
+	     (:file "qrpt")
+	     (:file "quasi-random-number-generators")
+	     (:file "random-number-generators")
+	     (:file "rank-1-update")
+	     (:file "rayleigh")
+	     (:file "rayleigh-tail")
+	     (:file "roots-multi")
+	     (:file "roots-one")
+	     (:file "row")
+	     (:file "scale")
+	     (:file "series-acceleration")
+	     (:file "set-basis")
+	     (:file "setf-column")
+	     (:file "setf-row")
+	     (:file "set-identity")
+	     (:file "shuffling-sampling")
+	     (:file "sort-matrix-largest")
+	     (:file "sort-matrix")
+	     (:file "sort-matrix-smallest")
+	     (:file "sort-vector-index")
+	     (:file "sort-vector-largest-index")
+	     (:file "sort-vector-largest")
+	     (:file "sort-vector")
+	     (:file "sort-vector-smallest-index")
+	     (:file "sort-vector-smallest")
+	     (:file "spherical-vector")
+	     (:file "svd")
+	     (:file "swap-columns")
+	     (:file "swap-elements")
+	     (:file "swap-row-column")
+	     (:file "swap-rows")
+	     (:file "synchrotron")
+	     (:file "tdist")
+	     (:file "transport")
+	     (:file "trigonometry")
+	     (:file "vector-div")
+	     (:file "vector-max-index")
+	     (:file "vector-max")
+	     (:file "vector-mean")
+	     (:file "vector-min")
+	     (:file "vector-min-index")
+	     (:file "vector-minmax-index")
+	     (:file "vector-minmax")
+	     (:file "vector-sub")
+	     (:file "vector-add")
+	     (:file "vector-mult")
+	     (:file "vector-reverse")
+	     (:file "vector-set-all")
+	     (:file "vector-set-zero")
+	     (:file "vector-standard-deviation")
+	     (:file "vector-standard-deviation-with-fixed-mean")
+	     (:file "vector-standard-deviation-with-mean")
+	     (:file "vector-swap")
+	     (:file "vector-variance")
+	     (:file "vector-variance-with-fixed-mean")
+	     (:file "vector-variance-with-mean")
+	     (:file "weibull")
+	     (:file "zeta")))))
