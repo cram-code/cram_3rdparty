@@ -28,7 +28,7 @@
 
 (in-package :asdf)
 
-#-(or openmcl sbcl cmu scl clisp lispworks ecl allegro cormanlisp abcl)
+#-(or openmcl mcl sbcl cmu scl clisp lispworks ecl allegro cormanlisp abcl mkcl)
 (error "Sorry, this Lisp is not yet supported.  Patches welcome!")
 
 (defsystem :cffi
@@ -42,6 +42,7 @@
     :serial t
     :components
     (#+openmcl    (:file "cffi-openmcl")
+     #+mcl        (:file "cffi-mcl")
      #+sbcl       (:file "cffi-sbcl")
      #+cmu        (:file "cffi-cmucl")
      #+scl        (:file "cffi-scl")
@@ -51,6 +52,7 @@
      #+allegro    (:file "cffi-allegro")
      #+cormanlisp (:file "cffi-corman")
      #+abcl       (:file "cffi-abcl")
+     #+mkcl       (:file "cffi-mkcl")
      (:file "package")
      (:file "utils")
      (:file "libraries")
@@ -58,6 +60,7 @@
      (:file "types")
      (:file "enum")
      (:file "strings")
+     (:file "structures")
      (:file "functions")
      (:file "foreign-vars")
      (:file "features")))))
