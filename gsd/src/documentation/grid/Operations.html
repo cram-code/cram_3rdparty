@@ -3,13 +3,13 @@
 <title>Operations - Grid Manual</title>
 <meta http-equiv="Content-Type" content="text/html">
 <meta name="description" content="Grid Manual">
-<meta name="generator" content="makeinfo 4.11">
+<meta name="generator" content="makeinfo 4.13">
 <link title="Top" rel="start" href="index.html#Top">
 <link rel="prev" href="Creating-a-grid.html#Creating-a-grid" title="Creating a grid">
-<link rel="next" href="Installation.html#Installation" title="Installation">
+<link rel="next" href="Efficiency.html#Efficiency" title="Efficiency">
 <link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
 <!--
-Copyright (C) 2009, 2010 Liam Healy-->
+Copyright (C) 2009, 2010 Liam M. Healy-->
 <meta http-equiv="Content-Style-Type" content="text/css">
 <style type="text/css"><!--
   pre.display { font-family:inherit }
@@ -25,9 +25,9 @@ Copyright (C) 2009, 2010 Liam Healy-->
 </head>
 <body>
 <div class="node">
-<p>
 <a name="Operations"></a>
-Next:&nbsp;<a rel="next" accesskey="n" href="Installation.html#Installation">Installation</a>,
+<p>
+Next:&nbsp;<a rel="next" accesskey="n" href="Efficiency.html#Efficiency">Efficiency</a>,
 Previous:&nbsp;<a rel="previous" accesskey="p" href="Creating-a-grid.html#Creating-a-grid">Creating a grid</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="index.html#Top">Top</a>
 <hr>
@@ -218,7 +218,17 @@ adjoining their columns, all of the same length:
 <pre class="example">     (slice (test-grid-double-float 'array '(3 4)) '(1 (:range 0 2)) :drop nil)
      #2A((10.0d0 11.0d0 12.0d0))
 </pre>
-   <h4 class="subsection">3.5.9 Vector products</h4>
+   <h4 class="subsection">3.5.9 <code>subgrid</code></h4>
+
+<p>A <dfn>stride</dfn> is the grid resulting from selection of elements at
+regular intervals.
+<pre class="example">     (stride #(1 2 3 4 5 6 7 8) 3)
+     #(1 4 7)
+</pre>
+   <p>The resultant grid will have rank one (vector) regardless of the source
+rank.
+
+<h4 class="subsection">3.5.10 Vector products</h4>
 
 <p><code>cross</code>,
 <code>inner</code>,

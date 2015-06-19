@@ -15,6 +15,8 @@
   <url type="website">http://repo.or.cz/w/gsd.git</url>
   <url type="bugtracker">https://github.com/cram-code/cram_core/issues</url>
   <url type="repository">https://github.com/cram-code/cram_core</url>
+  <url type="repository">http://repo.or.cz/gsd.git</url>
+  <!--external-version>e94b9ec23cb4f196c33987e8ed35838d0671b4f0</external-version-->
 
   <buildtool_depend>catkin</buildtool_depend>
 

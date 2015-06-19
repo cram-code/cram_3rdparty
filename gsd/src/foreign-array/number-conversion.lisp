@@ -1,8 +1,8 @@
 ;; Conversion of numbers C->CL
 ;; Liam Healy, Sun May 28 2006 - 22:04
-;; Time-stamp: <2010-06-19 18:47:04EDT number-conversion.lisp>
+;; Time-stamp: <2010-11-27 12:15:06EST number-conversion.lisp>
 ;;
-;; Copyright 2006, 2007, 2008, 2009 Liam M. Healy
+;; Copyright 2006, 2007, 2008, 2009, 2010 Liam M. Healy
 ;; Distributed under the terms of the GNU General Public License
 ;;
 ;; This program is free software: you can redistribute it and/or modify
@@ -20,8 +20,6 @@
 
 (in-package :grid)
 
-(export '(complex-to-cl))
-
 ;;;;****************************************************************************
 ;;;; Built-in numerical types
 ;;;;****************************************************************************
@@ -32,20 +30,4 @@
   "Reference C double(s)."
   `(cffi:mem-aref ,double :double ,index))
 
-;;;;****************************************************************************
-;;;; Complex numbers
-;;;;****************************************************************************
-
-;;; Complex struct is defined in init/complex-types.lisp.
-(defun complex-to-cl
-    (complex &optional (index 0) (complex-type 'complex-double-c))
-  "Make a CL complex number from the pointer to a complex struct or
-   an array of complex structs and an index into the array." 
-  (let ((carr (cffi:foreign-slot-value
-	       (cffi:inc-pointer
-		complex
-		(* index (cffi:foreign-type-size complex-type)))
-	       complex-type 'dat)))
-    (complex (dcref carr 0)
-	     (dcref carr 1))))
 	

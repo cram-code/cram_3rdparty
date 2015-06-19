@@ -1,6 +1,6 @@
 ;; Number types used by C functions, and specification conversion
 ;; Liam Healy 2008-12-31 21:06:34EST types.lisp
-;; Time-stamp: <2010-06-26 19:19:39EDT types.lisp>
+;; Time-stamp: <2010-11-15 12:16:33EST types.lisp>
 ;;
 ;; Copyright 2008, 2009 Liam M. Healy
 ;; Distributed under the terms of the GNU General Public License
@@ -22,7 +22,8 @@
 
 (export '(*cstd-integer-types*
 	  *cstd-cl-type-mapping* floating-point-association all-types
-	  lookup-type cl-single cl-cffi cffi-cl number-class))
+	  lookup-type cl-single cl-cffi cffi-cl number-class
+	  +foreign-pointer-type+ +foreign-pointer-class+))
 
 ;;;;****************************************************************************
 ;;;; Type specification conversion
@@ -115,14 +116,15 @@
   "A list of all types defined by symbol or definition."
   (mapcar (if right-side #'rest #'first) alist))
 
-(defun lookup-type (symbol alist &optional reverse)
-  "Lookup the symbol defined in the alist."
+(defun lookup-type (symbol alist &optional reverse error)
+  "Lookup the symbol defined in the alist.  If error is non-nil it
+   should be a string describing the class of types, and this function
+   will signal an error if the type wasn't found."
   (or 
    (if reverse
        (first (rassoc symbol alist :test #'equal))
        (rest (assoc symbol alist)))
-   ;;(error "Did not find ~a in ~a" symbol (mapcar #'first alist))
-   ))
+   (if error (error "~a type ~a unknown." error symbol))))
 
 ;;; (cl-single '(unsigned-byte 8))
 ;;; UNSIGNED-BYTE-8
@@ -154,3 +156,13 @@
   "Find the class corresponding to the numeric type."
   (find-if (lambda (class) (subtypep type class)) *cl-numeric-classes*))
 
+;;;;****************************************************************************
+;;;; Foreign pointers
+;;;;****************************************************************************
+
+;;; Pointer type
+(eval-when (:compile-toplevel :load-toplevel :execute)
+  (defconstant +foreign-pointer-class+ (class-name (class-of (cffi:null-pointer)))
+    "The class in which foreign pointers fall.")
+  (defconstant +foreign-pointer-type+ (type-of (cffi:null-pointer))
+    "The type of foreign pointers."))
