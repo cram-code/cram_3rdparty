@@ -33,13 +33,13 @@
 ;;;# Shell Execution
 
 #-(or abcl allegro clisp cmu ecl lispworks openmcl sbcl scl)
-(error "%INVOKE is unimplemented for this Lisp.  Patches welcome.")
+(grovel-error "%INVOKE is unimplemented for this Lisp.  Patches welcome.")
 
 ;; FIXME: doesn't do shell quoting
 #+abcl
 (defun %invoke (command arglist)
   (let ((cmdline (reduce (lambda (str1 str2)
-                           (concatenate 'string str1 #\Space str2))
+                           (concatenate 'string str1 " " str2))
                          arglist :initial-value command))
         (stream (make-string-output-stream)))
     (values (ext:run-shell-command cmdline :output stream)
@@ -57,32 +57,51 @@
               (integer   ret))
             "<see above>")))
 
-;;; FIXME: there's no way to tell from EXT:RUN-PROGRAM whether the
-;;; command failed or not.  Using EXT:SYSTEM instead, but we should
-;;; quote arguments.
 #+ecl
 (defun %invoke (command arglist)
-  (values (ext:system (format nil "~A~{ ~A~}" command arglist))
-          "<see above>"))
+  (values
+   (nth-value 1 (ext:run-program "/bin/sh"
+                                 (list "-c"
+                                       (format nil "~A~{ ~A~}" command arglist))
+                                 :wait t :output nil :input nil :error nil))
+   "<see above>"))
 
-#+(or openmcl cmu scl sbcl)
+(defun process-output (process-stream)
+  (with-open-stream (process-stream process-stream)
+    (with-output-to-string (str)
+      (loop for char = (read-char process-stream nil)
+            while char
+            do (write-char char str)))))
+
+#+(or cmu scl)
+(defun %invoke (command arglist)
+  (let* ((process (ext:run-program command arglist
+                                   :output :stream
+                                   :wait nil
+                                   :error :output))
+         (output (process-output (ext:process-output process))))
+    (ext:process-wait process)
+    (values (ext:process-exit-code process) output)))
+
+#+sbcl
+(defun %invoke (command arglist)
+  (let* ((process (sb-ext:run-program command arglist
+                                      :output :stream
+                                      :wait nil
+                                      :error :output
+                                      :search t))
+         (output (process-output (sb-ext:process-output process))))
+    (sb-ext:process-wait process)
+    (values (sb-ext:process-exit-code process) output)))
+
+#+openmcl
 (defun %invoke (command arglist)
   (let* ((exit-code)
-         (output
-          (with-output-to-string (s)
-            (let ((process (#+openmcl ccl:run-program
-                            #+(or cmu scl) ext:run-program
-                            #+sbcl sb-ext:run-program
-                            command arglist #-win32 :output #-win32 s
-                            :error :output
-                            #+sbcl :search #+sbcl t)))
-              #+win32
-              (write-line "note: SBCL on windows can't redirect output.")
-              (setq exit-code
-                    #+openmcl (nth-value
-                               1 (ccl:external-process-status process))
-                    #+sbcl (sb-ext:process-exit-code process)
-                    #+(or cmu scl) (ext:process-exit-code process))))))
+         (output (with-output-to-string (s)
+                   (let ((process (ccl:run-program command arglist
+                                                   :output s
+                                                   :error :output)))
+                     (setq exit-code (nth-value 1 (ccl:external-process-status process)))))))
     (values exit-code output)))
 
 #+allegro
@@ -115,7 +134,8 @@
   (multiple-value-bind (exit-code output)
       (%invoke command args)
     (unless (zerop exit-code)
-      (error "External process exited with code ~S.~@
-              Command was: ~S~{ ~S~}~@
-              Output was:~%~A"
-             exit-code command args output))))
+      (grovel-error "External process exited with code ~S.~@
+                     Command was: ~S~{ ~S~}~@
+                     Output was:~%~A"
+                    exit-code command args output))
+    output))

@@ -1,6 +1,6 @@
 ;; System grid-tests
 ;; Liam Healy 2009-11-28 17:22:21EST grid-tests.asd
-;; Time-stamp: <2010-06-20 19:04:25EDT foreign-array-tests.asd>
+;; Time-stamp: <2010-08-22 19:11:45EDT foreign-array-tests.asd>
 ;;
 ;; Copyright 2009, 2010 Liam M. Healy
 ;; Distributed under the terms of the GNU General Public License
@@ -29,4 +29,5 @@
   :components
   ((:module tests
 	    :components
-	    ((:file "compose")))))
+	    ((:file "lisp-unit-extension")
+	     (:file "compose")))))

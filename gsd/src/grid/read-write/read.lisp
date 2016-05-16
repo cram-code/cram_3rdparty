@@ -1,6 +1,6 @@
 ;; Read from a table
 ;; Liam Healy 2010-07-06 12:32:55EDT read.lisp
-;; Time-stamp: <2010-07-09 16:15:35EDT read.lisp>
+;; Time-stamp: <2010-08-13 10:00:52EDT read.lisp>
 ;;
 ;; Copyright 2010 Liam M. Healy
 ;; Distributed under the terms of the GNU General Public License
@@ -38,9 +38,9 @@
   (let ((*read-default-float-format* 'double-float))
     (mapcar 'read-maybe-from-string
 	    (if (eq separator :whitespace)
-		(cl-utilities:split-sequence-if
+		(split-sequence:split-sequence-if
 		 'cl-ppcre::whitespacep line :remove-empty-subseqs t)
-		(cl-utilities:split-sequence
+		(split-sequence:split-sequence
 		 separator line :remove-empty-subseqs t)))))
 
 (defun read-data-stream

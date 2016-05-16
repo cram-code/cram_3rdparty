@@ -3,13 +3,13 @@
 <title>Installation - Grid Manual</title>
 <meta http-equiv="Content-Type" content="text/html">
 <meta name="description" content="Grid Manual">
-<meta name="generator" content="makeinfo 4.11">
+<meta name="generator" content="makeinfo 4.13">
 <link title="Top" rel="start" href="index.html#Top">
-<link rel="prev" href="Operations.html#Operations" title="Operations">
+<link rel="prev" href="Efficiency.html#Efficiency" title="Efficiency">
 <link rel="next" href="Copying.html#Copying" title="Copying">
 <link href="http://www.gnu.org/software/texinfo/" rel="generator-home" title="Texinfo Homepage">
 <!--
-Copyright (C) 2009, 2010 Liam Healy-->
+Copyright (C) 2009, 2010 Liam M. Healy-->
 <meta http-equiv="Content-Style-Type" content="text/css">
 <style type="text/css"><!--
   pre.display { font-family:inherit }
@@ -25,18 +25,31 @@ Copyright (C) 2009, 2010 Liam Healy-->
 </head>
 <body>
 <div class="node">
-<p>
 <a name="Installation"></a>
+<p>
 Next:&nbsp;<a rel="next" accesskey="n" href="Copying.html#Copying">Copying</a>,
-Previous:&nbsp;<a rel="previous" accesskey="p" href="Operations.html#Operations">Operations</a>,
+Previous:&nbsp;<a rel="previous" accesskey="p" href="Efficiency.html#Efficiency">Efficiency</a>,
 Up:&nbsp;<a rel="up" accesskey="u" href="index.html#Top">Top</a>
 <hr>
 </div>
 
-<h2 class="chapter">4 Download and installation</h2>
+<h2 class="chapter">5 Download and installation</h2>
 
-<p><a name="index-installation-16"></a>The gitweb page is <a href="http://repo.or.cz/w/gsd.git">http://repo.or.cz/w/gsd.git</a>.  To download,
-<pre class="example">     <code>git clone git://repo.or.cz/gsd.git</code>
+<p><a name="index-installation-17"></a>The recommended way to download and install this software is through
+<a href="http://www.quicklisp.org/">quicklisp</a>.  Install quicklisp following
+the directions, then do one of:
+<pre class="example">     (ql:quickload "grid")
+     (ql:quickload "foreign-array")
+</pre>
+   <p>as desired, and these systems will be ready to use.  If you wish to run
+the regression (unit) tests, do <code>(ql:quickload "grid-tests")</code>
+or <code>(ql:quickload "foreign-array-tests")</code>.
+
+   <p>Users that need the very latest version will need to fetch the
+repository via git.  The <a href="http://repo.or.cz/w/gsd.git">gitweb page</a>
+gives a view of the commit history and information on cloning.  To
+clone,
+<pre class="example">     git clone <a href="git://repo.or.cz/gsd.git">git://repo.or.cz/gsd.git</a>
 </pre>
    <p>The <code>grid</code> system depends on
 <a href="http://common-lisp.net/project/alexandria/">alexandria</a>
@@ -52,7 +65,7 @@ foreign arrays a native Lisp view via the function <code>cl-array</code> for
 foreign arrays made in Lisp (not created in foreign code) for supported
 implementations (currently SBCL, CCL, ECL, LispWorks, and Allegro).
 
-   <p>Install
+   <p>Note: FSBV is for the time being mandatory.  Only one file is needed, and no foreign libraries, but until it is split into two separate systems, the whole thing must be loaded.
 
    </body></html>
 

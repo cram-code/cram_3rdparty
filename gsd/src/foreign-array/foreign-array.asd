@@ -1,6 +1,6 @@
 ;; System definition
 ;; Liam Healy 2009-12-27 09:22:50EST foreign-array.asd
-;; Time-stamp: <2010-07-07 09:58:54EDT foreign-array.asd>
+;; Time-stamp: <2010-11-27 21:27:42EST foreign-array.asd>
 ;;
 ;; Copyright 2009, 2010 Liam M. Healy
 ;; Distributed under the terms of the GNU General Public License
@@ -32,18 +32,21 @@
   :description "Foreign arrays as grid structured data"
   :author "Liam M. Healy"
   :license "GPL v3"
-  :depends-on (grid cffi trivial-garbage alexandria
-		    split-sequence
-		    #+static-vectors static-vectors
-		    #+fsbv fsbv)
+  :depends-on
+  (grid cffi trivial-garbage alexandria
+	split-sequence
+	#+static-vectors static-vectors
+	;; FSBV is for the time being mandatory; only convert.lisp is
+	;; needed though, and could be split off.
+	fsbv)
   :components
   ((:file "types")
    (:file "complex-types" :depends-on ("types"))
-   (:file "element-types")
+   (:file "element-types" :depends-on ("types" "complex-types"))
    (:file "symbol-type")
    (:file "number-conversion"
 	  :depends-on ("complex-types" "symbol-type"))
-   (:file "foreign-array" :depends-on ("types" "element-types"))
-   (:file "methods")
    (:file "subclass" :depends-on ("element-types"))
-   (:file "vector-matrix" :depends-on ("element-types" "subclass"))))
+   (:file "foreign-array" :depends-on ("types" "element-types"))
+   (:file "vector-matrix" :depends-on ("element-types" "subclass"))
+   (:file "methods" :depends-on ("foreign-array" "vector-matrix"))))

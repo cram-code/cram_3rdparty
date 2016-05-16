@@ -30,17 +30,39 @@
 (defpackage #:cffi
   (:use #:common-lisp #:cffi-sys #:babel-encodings)
   (:import-from #:alexandria
-                #:ensure-list #:featurep #:format-symbol #:if-let
-                #:make-gensym-list #:once-only #:parse-body #:symbolicate
-                #:when-let #:with-unique-names #:lastcar
-                #:hash-table-values #:make-keyword)
+                #:compose
+                #:ensure-list
+                #:featurep
+                #:format-symbol
+                #:hash-table-values
+                #:if-let
+                #:ignore-some-conditions
+                #:lastcar
+                #:make-gensym-list
+                #:make-keyword
+                #:mappend
+                #:once-only
+                #:parse-body
+                #:simple-style-warning
+                #:symbolicate
+                #:when-let
+                #:with-unique-names)
   (:export
    ;; Types.
    #:foreign-pointer
 
+   ;; FIXME: the following types are undocumented. They should
+   ;; probably be replaced with a proper type introspection API
+   ;; though.
+   #:*built-in-foreign-types*
+   #:*other-builtin-types*
+   #:*built-in-integer-types*
+   #:*built-in-float-types*
+
    ;; Primitive pointer operations.
    #:foreign-free
    #:foreign-alloc
+   #:mem-aptr
    #:mem-aref
    #:mem-ref
    #:pointerp
@@ -114,7 +136,9 @@
    #:foreign-bitfield-value
    #:foreign-slot-pointer
    #:foreign-slot-value
+   #:foreign-slot-type
    #:foreign-slot-offset
+   #:foreign-slot-count
    #:foreign-slot-names
    #:foreign-type-alignment
    #:foreign-type-size
@@ -123,15 +147,20 @@
    #:with-foreign-slots
    #:convert-to-foreign
    #:convert-from-foreign
+   #:convert-into-foreign-memory
    #:free-converted-object
+   #:translation-forms-for-class
 
    ;; Extensible foreign type operations.
+   #:define-translation-method          ; FIXME: undocumented
    #:translate-to-foreign
    #:translate-from-foreign
+   #:translate-into-foreign-memory
    #:free-translated-object
    #:expand-to-foreign-dyn
    #:expand-to-foreign
    #:expand-from-foreign
+   #:expand-into-foreign-memory
 
    ;; Foreign globals.
    #:defcvar
